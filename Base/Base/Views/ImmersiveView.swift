@@ -15,36 +15,42 @@ struct ImmersiveView: View {
     @Environment(Tracking.self) var tracking
     var body: some View {
         RealityView { content in
-            // Add the initial RealityKit content
-            if let immersiveContentEntity = try? await Entity(named: "Immersive", in: realityKitContentBundle) {
+            // create parent root entity
+            let root = Entity()
+            // load scene(.USDZ) from Reality composer in RealityKit content bundle
+            if let immersiveContentEntity = try? await Entity(named: "DefaultScene", in: realityKitContentBundle) {
+                root.addChild(immersiveContentEntity)
                 
-                
-                let sphere = ModelEntity()
-                sphere.components.set([
-                    ModelComponent(
-                        mesh: .generateSphere(radius: 0.01),
-                        materials: [SimpleMaterial(color: .red, isMetallic: false)]),
-                   
-                    CollisionComponent(shapes: [
-                        ShapeResource.generateSphere(radius: 0.02)
-                    ], mode: .trigger)
-                ])
-//                immersiveContentEntity.addChild(sphere)
-                content.add(immersiveContentEntity)
-                content.add(sphere)
-                
-                immersiveContentEntity.components.set(ClosureComponent(closure: { deltaTime in
-                    //add logic for tracking
-                    //sample code for tracking index tip position with an entity
-                    if let latestRightHand = tracking.latestRightHand {
-
-                        sphere.transform.translation = ConvertTrackingTransform.GetJointPosition(.indexFingerTip, of: latestRightHand)
-                    }
-                    
-                    
-                }))
                 
             }
+            // create a model from scratch and assign it's position to right index tip
+            let indexSphere = ModelEntity()
+            indexSphere.components.set([
+                ModelComponent(
+                    mesh: .generateSphere(radius: 0.01),
+                    materials: [SimpleMaterial(color: .red, isMetallic: false)]),
+                
+                CollisionComponent(shapes: [
+                    ShapeResource.generateSphere(radius: 0.02)
+                ], mode: .trigger)
+            ])
+            let headShpere = indexSphere.clone(recursive: true)
+            root.addChild(indexSphere)
+            root.addChild(headShpere)
+            content.add(root)
+            //set system component to root entity
+            root.components.set(ClosureComponent(closure: { deltaTime in
+                //updates every frame
+                //add logic for tracking
+                //sample code for tracking index tip position with an entity
+                if tracking.worldTracking.state == .running {
+                    let headAnchor = tracking.worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime())
+                    headShpere.transform.translation = ConvertTrackingTransform.GetHeadTranslation(headAnchor) - ConvertTrackingTransform.GetHeadForward(headAnchor) * 0.8
+                }
+                if let latestRightHand = tracking.latestRightHand {
+                    indexSphere.transform.translation = ConvertTrackingTransform.GetJointTranslation(.indexFingerTip, of: latestRightHand)
+                }
+            }))
         }
         .task {
             // Start hand tracking once the view starts.

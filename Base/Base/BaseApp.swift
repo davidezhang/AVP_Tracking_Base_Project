@@ -37,6 +37,7 @@ struct BaseApp: App {
                     avPlayerViewModel.reset()
                 }
         }
-        .immersionStyle(selection: .constant(.full), in: .full)
+        // set immersion style to mix as default, need to use a variable to change the mode
+        .immersionStyle(selection: .constant(.mixed), in: .full, .mixed,.progressive)
     }
 }

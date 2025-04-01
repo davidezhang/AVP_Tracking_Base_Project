@@ -2,18 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSWorldSensingUsageDescription</key>
-	<string>Main view uses world tracking</string>
 	<key>NSHandsTrackingUsageDescription</key>
 	<string>main view uses HandTracking</string>
+	<key>NSWorldSensingUsageDescription</key>
+	<string>Main view uses world tracking</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
+		<key>UISceneConfigurations</key>
+		<dict/>
 		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
 		<string>UIWindowSceneSessionRoleApplication</string>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<true/>
-		<key>UISceneConfigurations</key>
-		<dict/>
 	</dict>
 </dict>
 </plist>

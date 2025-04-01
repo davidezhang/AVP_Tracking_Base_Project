@@ -26,6 +26,12 @@ extension Float3 {
         y = float4.y
         z = float4.z
     }
+    func length() -> Float {
+        sqrt(x * x + y * y + z * z)
+    }
+    func normalized() -> Float3 {
+        self * 1 / length()
+    }
 }
 
 extension Float4 {
@@ -33,6 +39,7 @@ extension Float4 {
     func toFloat3() -> Float3 {
         Float3(self)
     }
+   
 }
 
 extension Float4x4 {
@@ -44,6 +51,9 @@ extension Float4x4 {
     /// The translation component of Float4x4 and return as Float3.
     func translation() -> Float3 {
         columns.3.toFloat3()
+    }
+    func forward() -> Float3 {
+        columns.2.toFloat3().normalized()
     }
 }
 

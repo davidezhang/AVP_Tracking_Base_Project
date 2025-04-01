@@ -41,7 +41,7 @@ import SwiftUI
             print("Encountered an unexpected error: \(error.localizedDescription)")
         }
         
-        headAnchor = worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime())
+        
         // Assign the anchors based on the anchor updates.
         for await anchorUpdate in handTracking.anchorUpdates {
             switch anchorUpdate.anchor.chirality {
